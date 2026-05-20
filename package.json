@@ -1,0 +1,33 @@
+{
+  "name": "blogging-platform",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/ManuNovas/blogging-platform#readme",
+  "bugs": {
+    "url": "https://github.com/ManuNovas/blogging-platform/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManuNovas/blogging-platform.git"
+  },
+  "license": "ISC",
+  "author": "ManuNovas",
+  "type": "commonjs",
+  "main": "dist/index.min.js",
+  "scripts": {
+    "test": "jest --only-changed",
+    "test:ci": "jest --coverage"
+  },
+  "devDependencies": {
+    "@aws-lambda-powertools/logger": "^2.33.0",
+    "@aws-sdk/client-dynamodb": "^3.1050.0",
+    "@aws-sdk/lib-dynamodb": "^3.1050.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.1",
+    "aws-sdk-client-mock": "^4.1.0",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
