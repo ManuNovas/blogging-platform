@@ -9,6 +9,7 @@
     "types": [
       "node",
       "jest",
+      "aws-lambda",
     ]
   },
   "include": [
