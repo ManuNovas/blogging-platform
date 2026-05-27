@@ -1,0 +1,66 @@
+org: maneveil
+service: blogging-platform-api
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  stage: dev
+  environment:
+    POSTS_TABLE_NAME: posts-${sls:stage}-v1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - "arn:aws:dynamodb:${aws:region}:*:table/*"
+            - "arn:aws:dynamodb:${aws:region}:*:table/*/index/*"
+
+resources:
+  Resources:
+    PostsDynamoDbTable:
+      Type: "AWS::DynamoDB::Table"
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.POSTS_TABLE_NAME}
+
+functions:
+  create:
+    handler: src/adapters/handlers/postHandler.create
+    memorySize: 512
+    events:
+      - httpApi:
+          method: POST
+          path: /posts
+
+build:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    external:
+      - '@aws-sdk/*'
+
+package:
+  individually: true
+  patterns:
+    - '!.vscode/**'
+    - '!coverage/**'
+    - '!node_modules/**'
+    - '.env'
+  exclude:
+    - .git/**/**
