@@ -39,3 +39,14 @@ export const getAllSchema = {
         },
     },
 };
+
+export const idSchema = {
+    type: "object",
+    properties: {
+        id: {
+            type: "string",
+            minLength: 1,
+            maxLength: 128,
+        },
+    },
+};

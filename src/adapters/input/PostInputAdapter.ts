@@ -2,11 +2,12 @@ import { Logger } from "@aws-lambda-powertools/logger";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { PostInputPort } from "../../application/ports/input/PostInputPort";
 import { validate } from "@aws-lambda-powertools/validation";
-import { createSchema, getAllSchema } from "./schemas/PostSchemas";
+import { createSchema, getAllSchema, idSchema } from "./schemas/PostSchemas";
 import { StoreDto } from "../../domain/dtos/StoreDto";
 import { HttpError } from "../errors/HttpError";
 import { SchemaValidationError } from "@aws-lambda-powertools/validation/errors";
 import { GetAllDto } from "../../domain/dtos/GetAllDto";
+import { GetOneDto } from "../../domain/dtos/GetOneDto";
 
 export class PostInputAdapter {
     private readonly inputPort: PostInputPort;
@@ -75,6 +76,20 @@ export class PostInputAdapter {
             const posts = await this.inputPort.getAll(dto);
             return this.jsonResponse(200, posts);
         } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    async getOne(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+        try{
+            const dto = event.pathParameters as GetOneDto;
+            validate({
+                payload: dto,
+                schema: idSchema,
+            });
+            const post = await this.inputPort.getOne(dto);
+            return this.jsonResponse(200, post);
+        }catch(error){
             return this.handleError(error);
         }
     }

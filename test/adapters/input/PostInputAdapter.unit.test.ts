@@ -164,6 +164,55 @@ describe("PostInputAdapter", () => {
             });
         });
 
+        it("should return an error if http is thrown", () => {
+            const statusCode = 503;
+            const body = "Tiemout connection";
+            jest.spyOn(useCases, "getAll").mockRejectedValueOnce(new HttpError(statusCode, body));
+            adapter.getAll({} as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode,
+                    body,
+                });
+            });
+        });
+
+    });
+
+    describe("getOne", () => {
+
+        it("should return a post by id", () => {
+            const id = randomUUID();
+            const post: Post = {
+                id,
+                title: "White magic in Final Fantasy",
+                content: "Learn basic white magic spells for Final Fantasy.",
+                category: "Magic",
+                tags: ["White", "Magic", "Final", "Fanatasy"],
+                createdAt: new Date().toISOString(),
+            };
+            jest.spyOn(useCases, "getOne").mockResolvedValueOnce(post);
+            adapter.getOne({
+                pathParameters: {id},
+            } as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(post),
+                });
+            });
+        });
+
+        it("should return an error if validation fails", () => {
+            adapter.getOne({} as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 400,
+                    body: "Schema validation failed",
+                });
+            });
+        });
+
     });
 
 });

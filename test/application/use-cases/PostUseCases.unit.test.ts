@@ -70,7 +70,7 @@ describe("PostUseCases", () => {
                 createdAt: new Date().toISOString(),
             };
             jest.spyOn(repository, "getOne").mockResolvedValueOnce(post);
-            useCases.getOne(id).then((result) => {
+            useCases.getOne({id}).then((result) => {
                 expect(result).toEqual(post);
             });
         });

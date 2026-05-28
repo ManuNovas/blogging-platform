@@ -4,6 +4,7 @@ import { Post } from "../../domain/entities/Post";
 import { PostInputPort } from "../ports/input/PostInputPort";
 import { PostOutputPort } from "../ports/output/PostOutputPort";
 import { GetAllDto } from "../../domain/dtos/GetAllDto";
+import { GetOneDto } from "../../domain/dtos/GetOneDto";
 
 export class PostUseCases implements PostInputPort {
     private readonly repository: PostOutputPort;
@@ -29,7 +30,7 @@ export class PostUseCases implements PostInputPort {
         return this.repository.getAll(dto.term);
     }
 
-    async getOne(id: string): Promise<Post> {
-        return this.repository.getOne(id);
+    async getOne(dto: GetOneDto): Promise<Post> {
+        return this.repository.getOne(dto.id);
     }
 }

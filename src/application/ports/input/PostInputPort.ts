@@ -1,4 +1,5 @@
 import { GetAllDto } from "../../../domain/dtos/GetAllDto";
+import { GetOneDto } from "../../../domain/dtos/GetOneDto";
 import { StoreDto } from "../../../domain/dtos/StoreDto";
 import { Post } from "../../../domain/entities/Post";
 
@@ -7,5 +8,5 @@ export interface PostInputPort {
 
     getAll(dto: GetAllDto): Promise<Post[]>;
 
-    getOne(id: string): Promise<Post>;
+    getOne(dto: GetOneDto): Promise<Post>;
 }
