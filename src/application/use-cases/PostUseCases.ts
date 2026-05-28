@@ -25,7 +25,11 @@ export class PostUseCases implements PostInputPort {
         return post;
     }
 
-    getAll(dto: GetAllDto): Promise<Post[]> {
+    async getAll(dto: GetAllDto): Promise<Post[]> {
         return this.repository.getAll(dto.term);
+    }
+
+    async getOne(id: string): Promise<Post> {
+        return this.repository.getOne(id);
     }
 }

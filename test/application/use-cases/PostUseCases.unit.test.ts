@@ -57,4 +57,24 @@ describe("PostUseCases", () => {
 
     });
 
+    describe("getOne", () => {
+
+        it("should return a post by id", () => {
+            const id = randomUUID();
+            const post: Post = {
+                id,
+                title: "White magic in Final Fantasy",
+                content: "Learn basic white magic spells in Final Fantasy",
+                category: "Magic",
+                tags: ["White", "Magic", "Final", "Fantasy"],
+                createdAt: new Date().toISOString(),
+            };
+            jest.spyOn(repository, "getOne").mockResolvedValueOnce(post);
+            useCases.getOne(id).then((result) => {
+                expect(result).toEqual(post);
+            });
+        });
+
+    });
+
 });

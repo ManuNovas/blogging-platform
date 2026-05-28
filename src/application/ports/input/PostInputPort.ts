@@ -6,4 +6,6 @@ export interface PostInputPort {
     create(dto: StoreDto): Promise<Post>;
 
     getAll(dto: GetAllDto): Promise<Post[]>;
+
+    getOne(id: string): Promise<Post>;
 }
