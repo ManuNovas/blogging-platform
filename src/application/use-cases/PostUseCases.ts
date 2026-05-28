@@ -3,6 +3,7 @@ import { StoreDto } from "../../domain/dtos/StoreDto";
 import { Post } from "../../domain/entities/Post";
 import { PostInputPort } from "../ports/input/PostInputPort";
 import { PostOutputPort } from "../ports/output/PostOutputPort";
+import { GetAllDto } from "../../domain/dtos/GetAllDto";
 
 export class PostUseCases implements PostInputPort {
     private readonly repository: PostOutputPort;
@@ -22,5 +23,9 @@ export class PostUseCases implements PostInputPort {
         };
         await this.repository.create(post);
         return post;
+    }
+
+    getAll(dto: GetAllDto): Promise<Post[]> {
+        return this.repository.getAll(dto.term);
     }
 }

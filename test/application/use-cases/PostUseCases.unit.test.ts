@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { PostOutputAdapter } from "../../../src/adapters/output/PostOutputAdapter";
 import { PostUseCases } from "../../../src/application/use-cases/PostUseCases";
+import { Post } from "../../../src/domain/entities/Post";
 
 describe("PostUseCases", () => {
     let repository: PostOutputAdapter;
@@ -27,6 +29,29 @@ describe("PostUseCases", () => {
                 category: "Magic",
                 tags: ["White", "Magic", "Final", "Fantasy"],
                 createdAt: expect.any(String),
+            });
+        });
+
+    });
+
+    describe("getAll", () => {
+        
+        it("should return all posts from repository", () => {
+            const posts: Post[] = [
+                {
+                    id: randomUUID(),
+                    title: "White magic in Final Fantasy",
+                    content: "Learn basic white magic spells in Final Fantasy",
+                    category: "Magic",
+                    tags: ["White", "Magic", "Final", "Fantasy"],
+                    createdAt: new Date().toISOString(),
+                },
+            ];
+            jest.spyOn(repository, "getAll").mockResolvedValueOnce(posts);
+            useCases.getAll({
+                term: "White",
+            }).then((result) => {
+                expect(result).toEqual(posts);
             });
         });
 
