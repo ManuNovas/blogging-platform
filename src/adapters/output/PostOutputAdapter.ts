@@ -49,9 +49,9 @@ export class PostOutputAdapter implements PostOutputPort {
                 "#category": "category",
             };
             input.ExpressionAttributeValues = {
-                ":title": "title",
-                ":content": "content",
-                ":category": "category"
+                ":title": term,
+                ":content": term,
+                ":category": term,
             };
         }
         const command = new ScanCommand(input);
