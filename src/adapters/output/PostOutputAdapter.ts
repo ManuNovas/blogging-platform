@@ -1,6 +1,6 @@
 import { PostOutputPort } from "../../application/ports/output/PostOutputPort";
 import { Post } from "../../domain/entities/Post";
-import { DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommandInput, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommandInput, ScanCommand, GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { Logger } from "@aws-lambda-powertools/logger";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { HttpError } from "../errors/HttpError";
@@ -62,6 +62,22 @@ export class PostOutputAdapter implements PostOutputPort {
             const message = "Failed to get posts from database";
             this.logger.error({ message }, { error });
             throw new HttpError(503, message);
+        }
+    }
+
+    async getOne(id: string): Promise<Post> {
+        const input: GetCommandInput = {
+            TableName: this.tableName,
+            Key: { id },
+        };
+        const command = new GetCommand(input);
+        try {
+            const result = await this.documentClient.send(command);
+            return result.Item as Post;
+        } catch (error) {
+            const message = "Post not found";
+            this.logger.error({ message }, { error });
+            throw new HttpError(404, message);
         }
     }
 }

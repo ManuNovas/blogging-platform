@@ -4,4 +4,6 @@ export interface PostOutputPort {
     create(post: Post): Promise<void>;
 
     getAll(term?: string): Promise<Post[]>;
+
+    getOne(id: string): Promise<Post>;
 }

@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PostOutputAdapter } from "../../../src/adapters/output/PostOutputAdapter";
 import { mockClient } from "aws-sdk-client-mock";
-import { DynamoDBDocumentClient, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { Post } from "../../../src/domain/entities/Post";
 import { randomUUID } from "crypto";
 import { HttpError } from "../../../src/adapters/errors/HttpError";
@@ -97,6 +97,26 @@ describe("PostOutputAdapter", () => {
             adapter.getAll().then((result) => {
                 console.log(result);
             }).catch((error) => {
+                expect(error).toBeInstanceOf(HttpError);
+            });
+        });
+
+    });
+
+    describe("getOne", () => {
+
+        it("should return a post from database", () => {
+            documentClientMock.on(GetCommand).resolvesOnce({
+                Item: post,
+            });
+            adapter.getOne(post.id).then((result) => {
+                expect(result).toEqual(post);
+            });
+        });
+
+        it("should throw a http error if post is not found", () => {
+            documentClientMock.on(GetCommand).rejectsOnce();
+            adapter.getOne("1").catch((error) => {
                 expect(error).toBeInstanceOf(HttpError);
             });
         });
