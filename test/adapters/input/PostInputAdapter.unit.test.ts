@@ -104,4 +104,66 @@ describe("PostInputAdapter", () => {
 
     });
 
+    describe("getAll", () => {
+
+        it("should return all blog posts", () => {
+            const posts: Post[] = [
+                {
+                    id: randomUUID(),
+                    title: "White magic in Final Fantasy",
+                    content: "Learn basic white magic spells for Final Fantasy.",
+                    category: "Magic",
+                    tags: ["White", "Magic", "Final", "Fanatasy"],
+                    createdAt: new Date().toISOString(),
+                },
+                {
+                    id: randomUUID(),
+                    title: "Black magic in Final Fantasy",
+                    content: "Learn basic black magic spells for Final Fantasy.",
+                    category: "Magic",
+                    tags: ["White", "Magic", "Final", "Fanatasy"],
+                    createdAt: new Date().toISOString(),
+                },
+            ];
+            jest.spyOn(useCases, "getAll").mockResolvedValueOnce(posts);
+            adapter.getAll({} as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(posts),
+                });
+            });
+        });
+
+        it("should return filtered blog posts", () => {
+            const posts: Post[] = [
+                {
+                    id: randomUUID(),
+                    title: "White magic in Final Fantasy",
+                    content: "Learn basic white magic spells for Final Fantasy.",
+                    category: "Magic",
+                    tags: ["White", "Magic", "Final", "Fanatasy"],
+                    createdAt: new Date().toISOString(),
+                },
+            ];
+            jest.spyOn(useCases, "getAll").mockResolvedValueOnce(posts);
+            adapter.getAll({
+                queryStringParameters: {
+                    term: "White",
+                },
+            } as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(posts),
+                });
+            });
+        });
+
+    });
+
 });

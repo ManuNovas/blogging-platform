@@ -28,3 +28,14 @@ export const createSchema = {
     },
     required: ["title", "content", "category", "tags"],
 };
+
+export const getAllSchema = {
+    type: "object",
+    properties: {
+        term: {
+            type: "string",
+            nullable: true,
+            maxLength: 128,
+        },
+    },
+};
