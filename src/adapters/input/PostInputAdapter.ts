@@ -12,14 +12,14 @@ export class PostInputAdapter {
     private readonly inputPort: PostInputPort;
     private readonly logger: Logger;
 
-    constructor(inputPort: PostInputPort){
+    constructor(inputPort: PostInputPort) {
         this.inputPort = inputPort;
         this.logger = new Logger({
             serviceName: "PostInputAdapter",
         });
     }
 
-    private jsonResponse(status: number, entity: any): APIGatewayProxyResultV2{
+    private jsonResponse(status: number, entity: any): APIGatewayProxyResultV2 {
         return {
             statusCode: status,
             headers: {
@@ -29,17 +29,17 @@ export class PostInputAdapter {
         };
     }
 
-    private handleError(error: any): APIGatewayProxyResultV2{
+    private handleError(error: any): APIGatewayProxyResultV2 {
         this.logger.error({
             message: "Error while executing the input adapter",
-        }, {error});
-        if(error instanceof HttpError){
+        }, { error });
+        if (error instanceof HttpError) {
             return {
                 statusCode: error.status,
                 body: error.message,
             };
         }
-        if(error instanceof SchemaValidationError){
+        if (error instanceof SchemaValidationError) {
             return {
                 statusCode: 400,
                 body: error.message,
@@ -51,8 +51,8 @@ export class PostInputAdapter {
         };
     }
 
-    async create(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2>{
-        try{
+    async create(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+        try {
             const dto = JSON.parse(event.body ?? "{}") as StoreDto;
             validate({
                 payload: dto,
@@ -60,13 +60,13 @@ export class PostInputAdapter {
             });
             const post = await this.inputPort.create(dto);
             return this.jsonResponse(201, post);
-        }catch(error){
+        } catch (error) {
             return this.handleError(error);
         }
     }
 
-    async getAll(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2>{
-        try{
+    async getAll(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+        try {
             const dto = event.queryStringParameters ?? {} as GetAllDto;
             validate({
                 payload: dto,
@@ -74,7 +74,7 @@ export class PostInputAdapter {
             });
             const posts = await this.inputPort.getAll(dto);
             return this.jsonResponse(200, posts);
-        }catch(error){
+        } catch (error) {
             return this.handleError(error);
         }
     }

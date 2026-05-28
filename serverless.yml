@@ -46,6 +46,13 @@ functions:
       - httpApi:
           method: POST
           path: /posts
+  getAll:
+    handler: src/adapters/handlers/postHandler.getAll
+    memorySize: 512
+    events:
+      - httpApi:
+          method: GET
+          path: /posts
 
 build:
   esbuild:
