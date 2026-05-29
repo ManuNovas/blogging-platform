@@ -16,7 +16,8 @@
   "main": "dist/index.min.js",
   "scripts": {
     "test": "jest --only-changed",
-    "test:ci": "jest --coverage"
+    "test:ci": "jest --coverage",
+    "deploy": "serverless deploy"
   },
   "devDependencies": {
     "@aws-lambda-powertools/logger": "^2.33.0",

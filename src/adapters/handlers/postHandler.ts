@@ -10,3 +10,5 @@ const adapter = new PostInputAdapter(useCases);
 export const create = adapter.create.bind(adapter);
 
 export const getAll = adapter.getAll.bind(adapter);
+
+export const getOne = adapter.getOne.bind(adapter);

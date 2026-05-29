@@ -115,7 +115,11 @@ describe("PostOutputAdapter", () => {
         });
 
         it("should throw a http error if post is not found", () => {
-            documentClientMock.on(GetCommand).rejectsOnce();
+            documentClientMock.on(GetCommand).resolvesOnce({
+                $metadata: {
+                    httpStatusCode: 200,
+                },
+            });
             adapter.getOne("1").catch((error) => {
                 expect(error).toBeInstanceOf(HttpError);
             });

@@ -71,13 +71,13 @@ export class PostOutputAdapter implements PostOutputPort {
             Key: { id },
         };
         const command = new GetCommand(input);
-        try {
-            const result = await this.documentClient.send(command);
-            return result.Item as Post;
-        } catch (error) {
-            const message = "Post not found";
-            this.logger.error({ message }, { error });
-            throw new HttpError(404, message);
+        const result = await this.documentClient.send(command);
+        this.logger.info({
+            message: "Command result",
+        }, {result});
+        if (result.Item === undefined) {
+            throw new HttpError(404, "Post not found");
         }
+        return result.Item as Post;
     }
 }
