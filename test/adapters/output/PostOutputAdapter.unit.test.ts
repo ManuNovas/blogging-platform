@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PostOutputAdapter } from "../../../src/adapters/output/PostOutputAdapter";
 import { mockClient } from "aws-sdk-client-mock";
-import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Post } from "../../../src/domain/entities/Post";
 import { randomUUID } from "crypto";
 import { HttpError } from "../../../src/adapters/errors/HttpError";
@@ -16,6 +16,15 @@ describe("PostOutputAdapter", () => {
         category: "Magic",
         tags: ["White", "Magic", "Final", "Fanatasy"],
         createdAt: new Date().toISOString(),
+    };
+    const updatedPost: Post = {
+        id: post.id,
+        title: "Black Magic in Final Fantasy",
+        content: "Learn basic black magic spells for Final Fantasy",
+        category: "Magic",
+        tags: ["Black", "Magic", "Final", "Fantasy"],
+        createdAt: post.createdAt,
+        updatedAt: new Date().toISOString(),
     };
     let adapter: PostOutputAdapter;
 
@@ -121,6 +130,28 @@ describe("PostOutputAdapter", () => {
                 },
             });
             adapter.getOne("1").catch((error) => {
+                expect(error).toBeInstanceOf(HttpError);
+            });
+        });
+
+    });
+
+    describe("update", () => {
+
+        it("should update a post in database", () => {
+            documentClientMock.on(UpdateCommand).resolvesOnce({
+                $metadata: {
+                    httpStatusCode: 200,
+                },
+            });
+            adapter.update(updatedPost).then(() => {
+                expect(documentClientMock.commandCalls(UpdateCommand).length).toBe(1);
+            });
+        });
+
+        it("should throw a http error if something fails in dynamodb", () => {
+            documentClientMock.on(UpdateCommand).rejectsOnce(new Error("Connection timeout"));
+            adapter.update(updatedPost).catch((error) => {
                 expect(error).toBeInstanceOf(HttpError);
             });
         });
