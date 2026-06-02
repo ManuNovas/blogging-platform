@@ -77,4 +77,37 @@ describe("PostUseCases", () => {
 
     });
 
+    describe("update", () => {
+
+        it("should update a post by id", () => {
+            const id = randomUUID();
+            jest.spyOn(repository, "getOne").mockResolvedValueOnce({
+                id,
+                title: "White magic in Final Fantasy",
+                content: "Learn basic white magic spells in Final Fantasy",
+                category: "Magic",
+                tags: ["White", "Magic", "Final", "Fantasy"],
+                createdAt: new Date().toISOString(),
+            });
+            jest.spyOn(repository, "update").mockResolvedValueOnce();
+            useCases.update(id, {
+                title: "Black Magic in Final Fantasy",
+                content: "Learn basic black magic spells in Final Fantasy",
+                category: "Magic",
+                tags: ["Black", "Magic", "Final", "Fantasy"],
+            }).then((result) => {
+                expect(result).toEqual({
+                    id,
+                    title: "Black Magic in Final Fantasy",
+                    content: "Learn basic black magic spells in Final Fantasy",
+                    category: "Magic",
+                    tags: ["Black", "Magic", "Final", "Fantasy"],
+                    createdAt: expect.any(String),
+                    updatedAt: expect.any(String),
+                });
+            });
+        });
+
+    });
+
 });

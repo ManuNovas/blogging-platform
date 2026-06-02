@@ -33,4 +33,15 @@ export class PostUseCases implements PostInputPort {
     async getOne(dto: GetOneDto): Promise<Post> {
         return this.repository.getOne(dto.id);
     }
+
+    async update(id: string, dto: StoreDto): Promise<Post> {
+        const post = await this.repository.getOne(id);
+        post.title = dto.title
+        post.content = dto.content;
+        post.category = dto.category;
+        post.tags = dto.tags;
+        post.updatedAt = new Date().toISOString(),
+        await this.repository.update(post);
+        return post;
+    }
 }

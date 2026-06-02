@@ -9,4 +9,6 @@ export interface PostInputPort {
     getAll(dto: GetAllDto): Promise<Post[]>;
 
     getOne(dto: GetOneDto): Promise<Post>;
+
+    update(id: string, dto: StoreDto): Promise<Post>;
 }
