@@ -2,12 +2,12 @@ import { Logger } from "@aws-lambda-powertools/logger";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { PostInputPort } from "../../application/ports/input/PostInputPort";
 import { validate } from "@aws-lambda-powertools/validation";
-import { createSchema, getAllSchema, idSchema } from "./schemas/PostSchemas";
+import { storeSchema, getAllSchema, idSchema } from "./schemas/PostSchemas";
 import { StoreDto } from "../../domain/dtos/StoreDto";
 import { HttpError } from "../errors/HttpError";
 import { SchemaValidationError } from "@aws-lambda-powertools/validation/errors";
 import { GetAllDto } from "../../domain/dtos/GetAllDto";
-import { GetOneDto } from "../../domain/dtos/GetOneDto";
+import { PathParameterDto } from "../../domain/dtos/PathParameterDto";
 
 export class PostInputAdapter {
     private readonly inputPort: PostInputPort;
@@ -57,7 +57,7 @@ export class PostInputAdapter {
             const dto = JSON.parse(event.body ?? "{}") as StoreDto;
             validate({
                 payload: dto,
-                schema: createSchema,
+                schema: storeSchema,
             });
             const post = await this.inputPort.create(dto);
             return this.jsonResponse(201, post);
@@ -81,15 +81,34 @@ export class PostInputAdapter {
     }
 
     async getOne(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
-        try{
-            const dto = event.pathParameters as GetOneDto;
+        try {
+            const dto = event.pathParameters as PathParameterDto;
             validate({
                 payload: dto,
                 schema: idSchema,
             });
             const post = await this.inputPort.getOne(dto);
             return this.jsonResponse(200, post);
-        }catch(error){
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    async update(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+        try {
+            const pathParameterDto = event.pathParameters as PathParameterDto;
+            const storeDto = JSON.parse(event.body ?? "{}") as StoreDto;
+            validate({
+                payload: pathParameterDto,
+                schema: idSchema,
+            });
+            validate({
+                payload: storeDto,
+                schema: storeSchema,
+            });
+            const post = await this.inputPort.update(pathParameterDto.id, storeDto);
+            return this.jsonResponse(200, post);
+        } catch (error) {
             return this.handleError(error);
         }
     }

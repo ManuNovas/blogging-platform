@@ -1,4 +1,4 @@
-export const createSchema = {
+export const storeSchema = {
     type: "object",
     properties: {
         title: {

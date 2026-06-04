@@ -4,12 +4,12 @@ import { Post } from "../../domain/entities/Post";
 import { PostInputPort } from "../ports/input/PostInputPort";
 import { PostOutputPort } from "../ports/output/PostOutputPort";
 import { GetAllDto } from "../../domain/dtos/GetAllDto";
-import { GetOneDto } from "../../domain/dtos/GetOneDto";
+import { PathParameterDto } from "../../domain/dtos/PathParameterDto";
 
 export class PostUseCases implements PostInputPort {
     private readonly repository: PostOutputPort;
 
-    constructor(repository: PostOutputPort){
+    constructor(repository: PostOutputPort) {
         this.repository = repository;
     }
 
@@ -30,7 +30,7 @@ export class PostUseCases implements PostInputPort {
         return this.repository.getAll(dto.term);
     }
 
-    async getOne(dto: GetOneDto): Promise<Post> {
+    async getOne(dto: PathParameterDto): Promise<Post> {
         return this.repository.getOne(dto.id);
     }
 
@@ -41,7 +41,7 @@ export class PostUseCases implements PostInputPort {
         post.category = dto.category;
         post.tags = dto.tags;
         post.updatedAt = new Date().toISOString(),
-        await this.repository.update(post);
+            await this.repository.update(post);
         return post;
     }
 }

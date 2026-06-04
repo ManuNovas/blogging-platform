@@ -215,4 +215,55 @@ describe("PostInputAdapter", () => {
 
     });
 
+    describe("update", () => {
+
+        it("should update a post by id", () => {
+            const id = randomUUID();
+            const post: Post = {
+                id,
+                title: "Black magic in Final Fantasy",
+                content: "Learn basic black magic spells for Final Fantasy.",
+                category: "Magic",
+                tags: ["Black", "Magic", "Final", "Fantasy"],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+            jest.spyOn(useCases, "update").mockResolvedValueOnce(post);
+            adapter.update({
+                pathParameters: {id},
+                body: JSON.stringify({
+                    title: post.title,
+                    content: post.content,
+                    category: post.category,
+                    tags: post.tags,
+                }),
+            } as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 200,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(post),
+                });
+            });
+        });
+
+        it("should return an error if validation fails", () => {
+            adapter.update({
+                pathParameters: {
+                    id: randomUUID(),
+                },
+                body: JSON.stringify({
+                    title: "Black Magic in Final Fantasy",
+                }),
+            } as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 400,
+                    body: "Schema validation failed",
+                });
+            });
+        });
+
+    });
+
 });
