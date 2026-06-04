@@ -60,6 +60,13 @@ functions:
       - httpApi:
           method: GET
           path: /posts/{id}
+  update:
+    handler: src/adapters/handlers/postHandler.update
+    memorySize: 512
+    events:
+      - httpApi:
+          method: PUT
+          path: /posts/{id}
 
 build:
   esbuild:

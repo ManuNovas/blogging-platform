@@ -97,10 +97,10 @@ export class PostOutputAdapter implements PostOutputPort {
             },
             ExpressionAttributeValues: {
                 ":title": post.title,
-                "#content": post.content,
-                "#category": post.category,
-                "#tags": post.tags,
-                "#updatedAt": post.updatedAt,
+                ":content": post.content,
+                ":category": post.category,
+                ":tags": post.tags,
+                ":updatedAt": post.updatedAt,
             },
         };
         const command: UpdateCommand = new UpdateCommand(input);
