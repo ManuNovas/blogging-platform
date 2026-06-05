@@ -41,7 +41,12 @@ export class PostUseCases implements PostInputPort {
         post.category = dto.category;
         post.tags = dto.tags;
         post.updatedAt = new Date().toISOString(),
-            await this.repository.update(post);
+        await this.repository.update(post);
         return post;
+    }
+
+    async delete(id: string): Promise<void> {
+        const post = await this.repository.getOne(id);
+        await this.delete(post.id);
     }
 }

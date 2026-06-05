@@ -11,4 +11,6 @@ export interface PostInputPort {
     getOne(dto: PathParameterDto): Promise<Post>;
 
     update(id: string, dto: StoreDto): Promise<Post>;
+
+    delete(id: string): Promise<void>;
 }

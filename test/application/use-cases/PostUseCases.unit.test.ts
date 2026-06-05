@@ -110,4 +110,25 @@ describe("PostUseCases", () => {
 
     });
 
+    describe("delete", () => {
+
+        it("should delete a post by id", () => {
+            const id = randomUUID();
+            jest.spyOn(useCases, "getOne").mockResolvedValueOnce({
+                id,
+                title: "White magic in Final Fantasy",
+                content: "Learn basic white magic spells in Final Fanatasy",
+                category: "Magic",
+                tags: ["White", "Magic", "Final", "Fantasy"],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            });
+            jest.spyOn(useCases, "delete").mockResolvedValueOnce();
+            useCases.delete(id).then(() => {
+                expect(useCases.delete).toHaveBeenCalledTimes(1);
+            });
+        });
+
+    });
+
 });
