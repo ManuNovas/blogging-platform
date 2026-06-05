@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PostOutputAdapter } from "../../../src/adapters/output/PostOutputAdapter";
 import { mockClient } from "aws-sdk-client-mock";
-import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Post } from "../../../src/domain/entities/Post";
 import { randomUUID } from "crypto";
 import { HttpError } from "../../../src/adapters/errors/HttpError";
@@ -158,4 +158,27 @@ describe("PostOutputAdapter", () => {
 
     });
 
+
+    describe("delete", () => {
+
+        it("should delete a post in database", () => {
+            documentClientMock.on(DeleteCommand).resolvesOnce({
+                $metadata: {
+                    httpStatusCode: 200,
+                },
+            });
+            adapter.delete(randomUUID()).then(() => {
+                expect(documentClientMock.commandCalls(DeleteCommand).length).toBe(1);
+            });
+        });
+
+        it("should fail if something happens when deleting a post", () => {
+            documentClientMock.on(DeleteCommand)
+                .rejectsOnce(new Error("Connection timeout"));
+            adapter.delete("1").catch((error) => {
+                expect(error).toBeInstanceOf(HttpError);
+            });
+        });
+
+    });
 });

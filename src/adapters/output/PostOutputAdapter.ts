@@ -1,6 +1,6 @@
 import { PostOutputPort } from "../../application/ports/output/PostOutputPort";
 import { Post } from "../../domain/entities/Post";
-import { DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommandInput, ScanCommand, GetCommandInput, GetCommand, UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, PutCommand, PutCommandInput, ScanCommandInput, ScanCommand, GetCommandInput, GetCommand, UpdateCommandInput, UpdateCommand, DeleteCommandInput, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { Logger } from "@aws-lambda-powertools/logger";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { HttpError } from "../errors/HttpError";
@@ -74,7 +74,7 @@ export class PostOutputAdapter implements PostOutputPort {
         const result = await this.documentClient.send(command);
         this.logger.info({
             message: "Command result",
-        }, {result});
+        }, { result });
         if (result.Item === undefined) {
             throw new HttpError(404, "Post not found");
         }
@@ -104,13 +104,28 @@ export class PostOutputAdapter implements PostOutputPort {
             },
         };
         const command: UpdateCommand = new UpdateCommand(input);
-        try{
+        try {
             const result = await this.documentClient.send(command);
             this.logger.info({
                 message: "Post updated in database",
             }, { result });
-        }catch(error){
+        } catch (error) {
             const message = "Error while updating post in database";
+            this.logger.error({ message }, { error });
+            throw new HttpError(503, message);
+        }
+    }
+
+    async delete(id: string): Promise<void> {
+        const input: DeleteCommandInput = {
+            TableName: this.tableName,
+            Key: { id },
+        };
+        const command = new DeleteCommand(input);
+        try {
+            await this.documentClient.send(command);
+        } catch (error) {
+            const message = "Error deleting post in database";
             this.logger.error({ message }, { error });
             throw new HttpError(503, message);
         }

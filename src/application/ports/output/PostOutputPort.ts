@@ -8,4 +8,6 @@ export interface PostOutputPort {
     getOne(id: string): Promise<Post>;
 
     update(post: Post): Promise<void>;
+
+    delete(id: string): Promise<void>;
 }
