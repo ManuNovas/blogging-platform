@@ -266,4 +266,38 @@ describe("PostInputAdapter", () => {
 
     });
 
+    describe("delete", () => {
+
+        it("should delete a post by id", () => {
+            jest.spyOn(useCases, "delete").mockResolvedValue();
+            adapter.delete({
+                pathParameters: {
+                    id: randomUUID(),
+                },
+            } as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode: 204,
+                });
+            });
+        });
+
+        it("should return an http error if something fails", () => {
+            const statusCode = 404;
+            const body = "Post is not found";
+            jest.spyOn(useCases, "delete")
+                .mockRejectedValueOnce(new HttpError(statusCode, body));
+            adapter.delete({
+                pathParameters: {
+                    id: "1",
+                },
+            } as unknown as APIGatewayProxyEventV2).then((result) => {
+                expect(result).toEqual({
+                    statusCode,
+                    body,
+                });
+            });
+        });
+
+    });
+
 });

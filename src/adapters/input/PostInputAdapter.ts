@@ -112,4 +112,18 @@ export class PostInputAdapter {
             return this.handleError(error);
         }
     }
+
+    async delete(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+        try {
+            const pathParameterDto = event.pathParameters as PathParameterDto;
+            validate({
+                payload: pathParameterDto,
+                schema: idSchema,
+            });
+            await this.inputPort.delete(pathParameterDto.id);
+            return { statusCode: 204 };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
 }

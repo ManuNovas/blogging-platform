@@ -47,6 +47,6 @@ export class PostUseCases implements PostInputPort {
 
     async delete(id: string): Promise<void> {
         const post = await this.repository.getOne(id);
-        await this.delete(post.id);
+        await this.repository.delete(post.id);
     }
 }
