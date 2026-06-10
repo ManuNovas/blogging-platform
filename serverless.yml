@@ -67,6 +67,13 @@ functions:
       - httpApi:
           method: PUT
           path: /posts/{id}
+  delete:
+    handler: src/adapters/handlers/postHandler.deleteItem
+    memorySize: 512
+    events:
+      - httpApi:
+          method: DELETE
+          path: /posts/{id}
 
 build:
   esbuild:
